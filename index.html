@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipro</title><link rel="stylesheet" href="styles.css">
+    
+</head>
+<body>
+    <header>
+        <div class="logo-container">
+            <div class="logo">R</div>
+            <span class="logo-text">Recipro</span>
+        </div>
+        
+        <div class="user-section">
+            <span class="user-name" onclick="updateUserName()" title="Click to change name">Welcome, User</span>
+            <button class="db-manage-btn" onclick="openDatabasePanel()" title="Database Management">🗄️</button>
+            <button class="logout-btn" onclick="logout()" title="Logout">🚪</button>
+            <div class="user-icon">👤</div>
+        </div>
+    </header>
+    <div class="container">
+        <div class="container-header">
+            <h2>Recipe Management</h2>
+            <p>Manage your culinary school's recipe collection</p>
+        </div>
+        <div class="container-actions">
+            <button class="add-recipe-btn">Add Recipe</button>
+            <button class="combine-recipes-btn" onclick="testCombinerButton()">🛒 Combine Recipes</button>
+        </div>
+        <!-- Display user's recipes here -->
+    </div>
+<div class="search-engine">
+    <div class="search-bar">
+        <input type="text" id="searchInput" placeholder="Search recipes..." />
+        </div>
+    
+    <div class="filter-options">
+               <select id="course">
+            <option value="all">All</option>
+            <option value="appetizer">Appetizer</option>
+            <option value="main-course">Main Course</option>
+            <option value="dessert">Dessert</option>
+            <option value="confectionery">Confectionery</option>
+            <option value="beverage">Beverage</option>
+            <option value="side-dish">Side Dish</option>
+        </select>
+    </div>
+</div>
+   <!-- <div class="search-results-info" id="searchResultsInfo" style="display: none;">
+        <span class="results-count" id="resultsCount">Showing all recipes</span>
+        <button class="clear-filters-btn" onclick="clearFilters()" id="clearFiltersBtn" style="display: none;">Clear Filters</button>
+    </div> -->
+    <div class="recipe-list" id="recipeList">
+        <!-- Recipe cards will be dynamically loaded from database -->
+    </div>
+       
+
+    <!-- Recipe Detail Modal -->
+    <div id="recipeModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Recipe Title</h2>
+                <span class="close" onclick="closeModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="recipe-detail-container">
+                    <div class="recipe-detail-image">
+                        <img id="modalImage" src="" alt="Recipe Image">
+                        <div id="modalBadge" class="recipe-badge-large">Category</div>
+                    </div>
+                    <div class="recipe-detail-info">
+                        
+                        <!-- Recipe Scaling Section -->
+                        <div class="recipe-scaling">
+                            <h3>🎓 Training Scale Calculator</h3>
+                            <div class="scaling-controls">
+                                <div class="scaling-input-group">
+                                    <label for="studentCount">Number of Students:</label>
+                                    <div class="input-controls">
+                                        <button class="scale-btn decrease" onclick="adjustStudentCount(-1)">-</button>
+                                        <input type="number" id="studentCount" value="1" min="1" max="100" onchange="scaleRecipe()">
+                                        <button class="scale-btn increase" onclick="adjustStudentCount(1)">+</button>
+                                    </div>
+                                </div>
+                                <div class="scaling-info">
+                                    <span class="scaling-factor">Scale Factor: <span id="scaleFactor">1x</span></span>
+                                    <span class="total-servings">Total Servings: <span id="totalServings">4</span></span>
+                                </div>
+                                <div class="scaling-presets">
+                                    <button class="preset-btn" onclick="setStudentCount(10)">10 Students</button>
+                                    <button class="preset-btn" onclick="setStudentCount(20)">20 Students</button>
+                                    <button class="preset-btn" onclick="setStudentCount(30)">30 Students</button>
+                                    <button class="preset-btn reset" onclick="resetToOriginal()">Reset to 1</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="recipe-sections">
+                    <div class="ingredients-section">
+                        <h3>Ingredients</h3>
+                        <ul id="modalIngredients" class="ingredients-list">
+                            <!-- Ingredients will be populated by JavaScript -->
+                        </ul>
+                    </div>
+                    
+                    <div class="instructions-section">
+                        <h3>Instructions</h3>
+                        <ol id="modalInstructions" class="instructions-list">
+                            <!-- Instructions will be populated by JavaScript -->
+                        </ol>
+                    </div>
+                </div>
+                
+                <div class="recipe-tips">
+                    <h3>Chef's Tips</h3>
+                    <div id="modalTips" class="tips-content">
+                        <!-- Tips will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeModal()">Close</button>
+                <button class="btn-primary">Save to Favorites</button>
+                <button class="btn-primary" onclick="printRecipe()">🖨️ Print Recipe</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Recipe Form Modal -->
+    <div id="addRecipeModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add New Recipe</h2>
+                <span class="close" onclick="closeAddRecipeModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="addRecipeForm" class="recipe-form">
+                    <!-- Basic Information Section -->
+                    <div class="form-section">
+                        <h3>📝 Basic Information</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="recipeTitle">Recipe Title *</label>
+                                <input type="text" id="recipeTitle" name="title" required placeholder="Enter recipe name">
+                            </div>
+                            <div class="form-group">
+                                <label for="recipeCategory">Category *</label>
+                                <select id="recipeCategory" name="category" required>
+                                    <option value="">Select category</option>
+                                    <option value="appetizer">Appetizer</option>
+                                    <option value="main-course">Main Course</option>
+                                    <option value="dessert">Dessert</option>
+                                    <option value="beverage">Beverage</option>
+                                    <option value="side-dish">Side Dish</option>
+                                    <option value="confectionery">Confectionery</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="recipeImage">Recipe Image</label>
+                            <div style="display: flex; gap: 10px; margin-top: 8px;">
+                                <button type="button" class="browse-images-btn" onclick="openImageBrowser()">🖼️ Browse Images</button>
+                                <input type="file" id="recipeImageFile" name="imageFile" accept="image/*" style="flex: 1;" onchange="previewImage()">
+                            </div>
+                            <input type="hidden" id="recipeImage" name="image" value="">
+                            <div id="imagePreview" style="margin-top: 10px; display: none;">
+                                <img id="previewImg" src="" alt="Preview" style="max-width: 150px; max-height: 150px; border-radius: 4px;">
+                                <p id="previewText" style="font-size: 12px; color: #666; margin-top: 5px;"></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Servings Section -->
+                    <div class="form-section">
+                        <h3>🍽️ Servings</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="servings">Servings *</label>
+                                <input type="number" id="servings" name="servings" required min="1" max="50" placeholder="4">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Ingredients Section -->
+                    <div class="form-section">
+                        <h3>🥘 Ingredients</h3>
+                        <div class="ingredients-input-section">
+                            <div class="ingredients-header">
+                                <label>Ingredients List *</label>
+                                <button type="button" class="add-ingredient-btn" onclick="addIngredientField()">+ Add Ingredient</button>
+                            </div>
+                            <div id="ingredientsContainer" class="ingredients-container">
+                                <div class="ingredient-input-group">
+                                    <input type="text" name="ingredients[]" placeholder="e.g., 2 cups all-purpose flour" required>
+                                    <button type="button" class="remove-ingredient-btn" onclick="removeIngredientField(this)">×</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Instructions Section -->
+                    <div class="form-section">
+                        <h3>📝 Instructions</h3>
+                        <div class="instructions-input-section">
+                            <div class="ingredients-header">
+                                <label>Step-by-Step Instructions *</label>
+                                <button type="button" class="add-ingredient-btn" onclick="addInstructionField()">+ Add Step</button>
+                            </div>
+                            <div id="instructionsContainer" class="instructions-container">
+                                <div class="instruction-input-group">
+                                    <span class="step-number">1</span>
+                                    <textarea name="instructions[]" placeholder="Describe the first step..." required rows="2"></textarea>
+                                    <button type="button" class="remove-instruction-btn" onclick="removeInstructionField(this)">×</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Chef's Tips Section -->
+                    <div class="form-section">
+                        <h3>💡 Chef's Tips</h3>
+                        <div class="form-group">
+                            <label for="recipeTips">Professional Tips & Notes</label>
+                            <textarea id="recipeTips" name="tips" placeholder="Share your professional tips and cooking secrets..." rows="3"></textarea>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" onclick="closeAddRecipeModal()">Cancel</button>
+                <button type="button" class="btn-primary" onclick="saveNewRecipe()">Save Recipe</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Image Browser Modal -->
+    <div id="imageBrowserModal" class="modal">
+        <div class="modal-content" style="max-width: 600px; max-height: 90vh; overflow-y: auto;">
+            <div class="modal-header">
+                <h2>🖼️ Select an Image</h2>
+                <span class="close" onclick="closeImageBrowser()">&times;</span>
+            </div>
+            <div class="modal-body" style="padding: 20px;">
+                <div id="imageBrowserGallery" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 15px;">
+                    <!-- Images will be loaded here -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" onclick="closeImageBrowser()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteConfirmModal" class="modal">
+        <div class="modal-content delete-modal">
+            <div class="modal-header">
+                <h2>🗑️ Delete Recipe</h2>
+                <span class="close" onclick="closeDeleteModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="delete-warning">
+                    <div class="warning-icon">⚠️</div>
+                    <div class="warning-text">
+                        <h3>Are you sure you want to delete this recipe?</h3>
+                        <p id="deleteRecipeName">Recipe Name</p>
+                        <p class="warning-message">This action cannot be undone. The recipe will be permanently removed from your collection.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" onclick="closeDeleteModal()">Cancel</button>
+                <button type="button" class="btn-danger" onclick="confirmDeleteRecipe()">Delete Recipe</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Database Management Modal -->
+    <div id="databaseModal" class="modal">
+        <div class="modal-content database-modal">
+            <div class="modal-header">
+                <h2>🗄️ Database Management</h2>
+                <span class="close" onclick="closeDatabasePanel()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="db-stats-section">
+                    <h3>📊 Database Statistics</h3>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <span class="stat-number" id="totalRecipesCount">0</span>
+                            <span class="stat-label">Total Recipes</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number" id="dbSizeDisplay">0 MB</span>
+                            <span class="stat-label">Database Size</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number" id="categoriesCount">0</span>
+                            <span class="stat-label">Categories</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="db-actions-section">
+                    <h3>🔧 Database Actions</h3>
+                    <div class="action-buttons">
+                        <button class="btn-secondary" onclick="exportDatabase()">
+                            📤 Export Recipes
+                        </button>
+                        <button class="btn-secondary" onclick="importDatabase()">
+                            📥 Import Recipes
+                        </button>
+                        <button class="btn-danger" onclick="clearDatabase()">
+                            🗑️ Clear All Recipes
+                        </button>
+                        <button class="btn-secondary" onclick="refreshDatabase()">
+                            🔄 Refresh Database
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="db-recent-section">
+                    <h3>📝 Recent Activity</h3>
+                    <div id="recentActivity" class="recent-list">
+                        <p>Loading recent activity...</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" onclick="closeDatabasePanel()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden file input for import -->
+    <input type="file" id="importFileInput" accept=".json" style="display: none;" onchange="handleFileImport(event)">
+
+    <!-- Recipe Combiner Modal -->
+    <div id="recipeCombinerModal" class="modal">
+        <div class="modal-content recipe-combiner-modal">
+            <div class="modal-header">
+                <h2>🛒 Recipe Combiner</h2>
+                <span class="close" onclick="closeRecipeCombiner()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="combiner-layout">
+                    <!-- Left Panel: Recipe Selection -->
+                    <div class="recipe-selection-panel">
+                        <h3>📋 Select Recipes</h3>
+                        <div class="recipe-search">
+                            <input type="text" id="combinerSearchInput" placeholder="Search recipes to add..." onkeyup="searchRecipesForCombiner()">
+                        </div>
+                        <div id="availableRecipesList" class="available-recipes-list">
+                            <!-- Available recipes will be populated here -->
+                        </div>
+                    </div>
+
+                    <!-- Right Panel: Selected Recipes & Shopping List -->
+                    <div class="selected-recipes-panel">
+                        <div class="selected-recipes-section">
+                            <h3>✅ Selected Recipes</h3>
+                            <div id="selectedRecipesList" class="selected-recipes-list">
+                                <p class="empty-state">No recipes selected yet. Choose recipes from the left panel.</p>
+                            </div>
+                        </div>
+
+                        <div class="shopping-list-section">
+                            <h3>🛒 Shopping List</h3>
+                            <div class="shopping-list-controls">
+                                <button class="btn-primary" onclick="generateShoppingList()" id="generateListBtn" disabled>
+                                    📝 Generate List
+                                </button>
+                                <button class="btn-secondary" onclick="printShoppingList()" id="printListBtn" disabled>
+                                    🖨️ Print
+                                </button>
+                                <button class="btn-secondary" onclick="exportShoppingList()" id="exportListBtn" disabled>
+                                    💾 Export
+                                </button>
+                            </div>
+                            <div id="shoppingListContent" class="shopping-list-content">
+                                <p class="empty-state">Select recipes to generate a shopping list.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-danger" onclick="clearAllSelectedRecipes()">Clear All</button>
+                <button type="button" class="btn-secondary" onclick="closeRecipeCombiner()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteConfirmModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Delete Recipe</h2>
+                <span class="close" onclick="closeDeleteModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete "<span id="deleteRecipeName"></span>"?</p>
+                <p style="color: #666; font-size: 14px; margin-top: 10px;">This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" onclick="closeDeleteModal()">Cancel</button>
+                <button type="button" class="btn-danger">Delete Recipe</button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Wanezi High School. All rights reserved.</p>
+    </footer>
+    <script src="database.js"></script>
+    <script src="recipe-combiner.js"></script>
+    <script src="script.js"></script>
+    <script>
+      // Initialize and manage the welcome message with the logged-in user's name
+      (function () {
+        function getDisplayName() {
+          const storedName = localStorage.getItem('recipro_user_name');
+          if (storedName && storedName.trim()) return storedName.trim();
+          try {
+            const user = JSON.parse(localStorage.getItem('recipro_current_user') || 'null');
+            if (user) {
+              const first = (user.firstName || '').trim();
+              const last = (user.lastName || '').trim();
+              const full = `${first} ${last}`.trim();
+              return full || (user.username || 'User');
+            }
+          } catch (e) {}
+          return 'User';
+        }
+
+        function initializeUserWelcome() {
+          const el = document.querySelector('.user-name');
+          if (el) el.textContent = `Welcome, ${getDisplayName()}`;
+          if (typeof updateAdminElements === 'function') updateAdminElements();
+        }
+
+        // Handlers expected by header buttons
+        window.updateUserName = function () {
+          const current = getDisplayName();
+          const newName = prompt('Enter display name:', current);
+          if (newName && newName.trim()) {
+            localStorage.setItem('recipro_user_name', newName.trim());
+            initializeUserWelcome();
+          }
+        };
+
+        window.logout = function () {
+          localStorage.removeItem('recipro_current_user');
+          localStorage.removeItem('recipro_user_role');
+          localStorage.removeItem('recipro_remember_me');
+          window.location.href = 'login.html';
+        };
+
+        document.addEventListener('DOMContentLoaded', initializeUserWelcome);
+      })();
+    </script>
+</body>
+</html>

@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe Combiner Demo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .demo-container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+        .feature-list li {
+            background: #f8f9fa;
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #28a745;
+        }
+        .feature-list li strong {
+            color: #28a745;
+        }
+        .demo-section {
+            margin: 30px 0;
+            padding: 20px;
+            background: #e9ecef;
+            border-radius: 8px;
+        }
+        .demo-section h3 {
+            color: #495057;
+            margin-top: 0;
+        }
+        .code-example {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+        }
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            margin: 10px 5px;
+            transition: background-color 0.3s;
+        }
+        .btn:hover {
+            background: #0056b3;
+        }
+        .btn-success {
+            background: #28a745;
+        }
+        .btn-success:hover {
+            background: #218838;
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-container">
+        <h1>🛒 Recipe Combiner Module</h1>
+        
+        <p>The Recipe Combiner module allows users to select multiple recipes and automatically generate a consolidated shopping list with combined ingredients. Perfect for meal planning and bulk cooking!</p>
+        
+        <h2>✨ Key Features</h2>
+        <ul class="feature-list">
+            <li><strong>Multi-Recipe Selection:</strong> Choose multiple recipes from your collection</li>
+            <li><strong>Recipe Scaling:</strong> Adjust serving sizes with multipliers (e.g., 2x, 0.5x)</li>
+            <li><strong>Smart Ingredient Consolidation:</strong> Automatically combines similar ingredients</li>
+            <li><strong>Unit Normalization:</strong> Handles different units (cups, tbsp, tsp, etc.)</li>
+            <li><strong>Categorized Shopping List:</strong> Organizes ingredients by category (Produce, Dairy, etc.)</li>
+            <li><strong>Print & Export:</strong> Generate printable lists or export as text files</li>
+            <li><strong>Quantity Parsing:</strong> Handles fractions, decimals, and mixed numbers</li>
+            <li><strong>Real-time Updates:</strong> Shopping list updates as you modify selections</li>
+        </ul>
+
+        <div class="demo-section">
+            <h3>🔧 How It Works</h3>
+            <p>The module uses advanced ingredient parsing to understand quantities, units, and ingredient names. It then consolidates similar ingredients across recipes and generates organized shopping lists.</p>
+            
+            <h4>Example Ingredient Parsing:</h4>
+            <div class="code-example">
+Input: "2 1/2 cups all-purpose flour"
+Parsed: {
+  quantity: 2.5,
+  unit: "cup",
+  ingredient: "all-purpose flour"
+}
+
+Input: "1 tbsp olive oil"
+Parsed: {
+  quantity: 1,
+  unit: "tbsp", 
+  ingredient: "olive oil"
+}
+            </div>
+        </div>
+
+        <div class="demo-section">
+            <h3>📋 Sample Shopping List Output</h3>
+            <div class="code-example">
+🛒 SHOPPING LIST
+══════════════════════════════════════════════════
+
+📋 RECIPES INCLUDED:
+• Classic Margherita Pizza (×2) - 8 servings
+• Herb-Crusted Grilled Salmon - 2 servings
+
+PRODUCE:
+─────────
+☐ 4 medium tomatoes
+☐ 1/2 cup fresh basil leaves
+☐ 4 tbsp fresh dill, chopped
+☐ 2 lemons (zested and juiced)
+
+DAIRY & EGGS:
+─────────────
+☐ 16 oz fresh mozzarella cheese, sliced
+☐ 12 tbsp unsalted butter
+
+PANTRY & DRY GOODS:
+──────────────────
+☐ 4 cups all-purpose flour
+☐ 10 tbsp olive oil
+
+SPICES & SEASONINGS:
+───────────────────
+☐ 2 tsp salt
+☐ 1 tsp black pepper
+
+══════════════════════════════════════════════════
+Generated on 1/20/2025 at 2:30:15 PM
+Total recipes: 2 | Total ingredients: 15
+            </div>
+        </div>
+
+        <div class="demo-section">
+            <h3>🎯 Usage Instructions</h3>
+            <ol>
+                <li>Click the <strong>"🛒 Combine Recipes"</strong> button in the main interface</li>
+                <li>Search and select recipes from the left panel</li>
+                <li>Adjust serving multipliers as needed</li>
+                <li>Click <strong>"📝 Generate List"</strong> to create your shopping list</li>
+                <li>Use <strong>"🖨️ Print"</strong> or <strong>"💾 Export"</strong> to save your list</li>
+            </ol>
+        </div>
+
+        <div style="text-align: center; margin-top: 40px;">
+            <a href="index.html" class="btn btn-success">🏠 Back to Recipe Manager</a>
+            <a href="#" onclick="window.print()" class="btn">🖨️ Print This Demo</a>
+        </div>
+
+        <div style="margin-top: 30px; padding: 20px; background: #d1ecf1; border-radius: 8px; border: 1px solid #bee5eb;">
+            <h4 style="color: #0c5460; margin-top: 0;">💡 Pro Tips</h4>
+            <ul style="color: #0c5460;">
+                <li>Use fractional multipliers (like 0.5) to reduce recipe quantities</li>
+                <li>The system automatically handles unit conversions (cups to tbsp, etc.)</li>
+                <li>Ingredients are categorized for easier shopping</li>
+                <li>Export lists as text files for mobile shopping apps</li>
+                <li>Print function creates a clean, formatted shopping list</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>
